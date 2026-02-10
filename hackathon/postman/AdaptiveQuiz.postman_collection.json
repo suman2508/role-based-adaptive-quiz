@@ -1,0 +1,206 @@
+{
+  "info": {
+    "_postman_id": "2d8b7f94-8e44-4e7c-9a38-9c6bcb9d6b11",
+    "name": "AI Adaptive Quiz Platform - API Collection",
+    "description": "Postman collection for Role Intelligence, Roadmap, Quiz, Performance, and Schedule APIs.\nUse {{baseUrl}} to point to your environment (default http://localhost:8080).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "userId", "value": "1" },
+    { "key": "roleId", "value": "1" },
+    { "key": "questionId", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "Roles",
+      "item": [
+        {
+          "name": "Analyze Role (POST /roles/analyze)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"roleName\": \"Backend Developer\",\n  \"topN\": 10\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/roles/analyze",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "roles", "analyze" ]
+            },
+            "description": "Uses LLM via Spring AI to extract and rank skills for a target role."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Role Skills (GET /roles/{roleId}/skills)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/roles/{{roleId}}/skills",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "roles", "{{roleId}}", "skills" ]
+            },
+            "description": "Fetches stored skills mapped to a role, ordered by priority."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Roadmap",
+      "item": [
+        {
+          "name": "Generate Roadmap (POST /roadmap/generate/{userId})",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"weeks\": 8\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/roadmap/generate/{{userId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "roadmap", "generate", "{{userId}}" ]
+            },
+            "description": "Generates a weekly learning roadmap for the user. Body is placeholder until spec finalized."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Roadmap (GET /roadmap/{userId})",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/roadmap/{{userId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "roadmap", "{{userId}}" ]
+            },
+            "description": "Fetches the user's current roadmap."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Quiz",
+      "item": [
+        {
+          "name": "Start Quiz (POST /quiz/start)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": {{userId}}\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/quiz/start",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "quiz", "start" ]
+            },
+            "description": "Begins a quiz session for the user using adaptive rules."
+          },
+          "response": []
+        },
+        {
+          "name": "Submit Quiz (POST /quiz/submit)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": {{userId}},\n  \"questionId\": {{questionId}},\n  \"selectedAnswer\": \"Option A\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/quiz/submit",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "quiz", "submit" ]
+            },
+            "description": "Submits an answer for a question; the engine records performance."
+          },
+          "response": []
+        },
+        {
+          "name": "Next Adaptive (GET /quiz/next-adaptive)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/quiz/next-adaptive?userId={{userId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "quiz", "next-adaptive" ],
+              "query": [
+                { "key": "userId", "value": "{{userId}}" }
+              ]
+            },
+            "description": "Retrieves the next adaptive question for the user based on recent performance."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Performance",
+      "item": [
+        {
+          "name": "Get Performance (GET /performance/{userId})",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/performance/{{userId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "performance", "{{userId}}" ]
+            },
+            "description": "Returns skill-wise performance summary for the user."
+          },
+          "response": []
+        },
+        {
+          "name": "Readiness Score (GET /performance/readiness-score/{userId})",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/performance/readiness-score/{{userId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "performance", "readiness-score", "{{userId}}" ]
+            },
+            "description": "Returns the overall readiness score for the user."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Schedule",
+      "item": [
+        {
+          "name": "Get Schedule (GET /schedule/{userId})",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/schedule/{{userId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "schedule", "{{userId}}" ]
+            },
+            "description": "Returns the daily practice schedule for the user."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
