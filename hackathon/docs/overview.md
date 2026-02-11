@@ -2,7 +2,6 @@
 
 This document provides:
 - A high-level flow diagram
-- A 2–3 minute architectural/code-structure briefing
 - A concise features list
 
 ---
@@ -54,7 +53,7 @@ Key notes:
 
 ---
 
-## 2) 2–3 Minute Code Structure & Working Explanation
+## 2) Code Structure & Working 
 
 High-level architecture (Modular Monolith, Clean Architecture-inspired):
 - Controller Layer (REST): Pure I/O boundary (request/response DTOs). No business logic.
@@ -146,9 +145,3 @@ Platform Features:
 - Optional performance extras: Redis caching, event-driven evaluations, gamification, multi-LLM support
 
 ---
-
-References and Next Steps:
-- See application.yml for environment-driven configuration (DB, JWT, Spring AI).
-- Enable pgvector by switching to a pgvector image and adding extension migration when semantic search is needed.
-- Add dedicated DTO mappers for each feature module (role, roadmap, quiz, performance, schedule).
-- Expand tests (service + rule engine) and consider Testcontainers for integration tests.
