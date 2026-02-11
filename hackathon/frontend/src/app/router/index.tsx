@@ -1,6 +1,8 @@
 import React from 'react';
 import { Routes, Route, Navigate, Link, Outlet } from 'react-router-dom';
 import { API_BASE_URL } from '@config/env';
+import ProtectedRoute from '@components/auth/ProtectedRoute';
+import SignInPage from '@features/auth/SignInPage';
 
 /**
  * Temporary in-file pages and layout to get the app routing working end-to-end.
@@ -213,11 +215,12 @@ export default function AppRouter() {
       <Route element={<AppLayout />}>
         <Route index element={<LandingPage />} />
         <Route path="role" element={<RolePage />} />
-        <Route path="roadmap" element={<RoadmapPage />} />
-        <Route path="quiz" element={<QuizPage />} />
-        <Route path="performance" element={<PerformancePage />} />
-        <Route path="schedule" element={<SchedulePage />} />
+        <Route path="roadmap" element={<ProtectedRoute><RoadmapPage /></ProtectedRoute>} />
+        <Route path="quiz" element={<ProtectedRoute><QuizPage /></ProtectedRoute>} />
+        <Route path="performance" element={<ProtectedRoute><PerformancePage /></ProtectedRoute>} />
+        <Route path="schedule" element={<ProtectedRoute><SchedulePage /></ProtectedRoute>} />
       </Route>
+      <Route path="signin" element={<SignInPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
