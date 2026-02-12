@@ -39,3 +39,6 @@ jacoco.exec
 
 # Docker
 *.pid
+
+# Environment files
+.env

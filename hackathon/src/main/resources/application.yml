@@ -7,7 +7,8 @@ spring:
     password: ${SPRING_DATASOURCE_PASSWORD:quiz}
   jpa:
     hibernate:
-      ddl-auto: validate
+      # ddl-auto: validate
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -15,13 +16,16 @@ spring:
         jdbc.time_zone: UTC
     open-in-view: false
   flyway:
-    enabled: true
+    enabled: false
     locations: classpath:db/migration
     baseline-on-migrate: true
   ai:
     openai:
-      api-key: ${SPRING_AI_OPENAI_API_KEY:}
-      base-url: ${SPRING_AI_OPENAI_BASE_URL:}
+      api-key: ${SPRING_AI_OPENAI_API_KEY}
+      base-url: ${SPRING_AI_OPENAI_BASE_URL}
+      chat:
+        options:
+          model: gpt-4.1-mini
   mvc:
     throw-exception-if-no-handler-found: true
   web:
