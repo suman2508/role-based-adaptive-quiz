@@ -1,0 +1,305 @@
+{
+  "info": {
+    "_postman_id": "9e3a9605-0b44-4a9c-8d1a-quiz-collection-v1",
+    "name": "AI Role-Based Adaptive Quiz - Backend APIs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Postman collection for Auth, Role Analysis, Roadmap, Quiz, Performance, and Schedule APIs.\nUse with the provided 'Local Backend' environment."
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "description": "Authentication flows",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "auth": null,
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Doe\",\n  \"email\": \"jane{{randomInt}}@example.com\",\n  \"password\": \"Password@123\",\n  \"targetRole\": \"Backend Developer\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "auth", "register" ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let json = {};",
+                  "try { json = pm.response.json(); } catch(e) {}",
+                  "if (json && json.accessToken) {",
+                  "  pm.environment.set('accessToken', json.accessToken);",
+                  "  pm.environment.set('refreshToken', json.refreshToken || '');",
+                  "  pm.environment.set('tokenType', json.tokenType || 'Bearer');",
+                  "}",
+                  ""
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": null,
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"jane@example.com\",\n  \"password\": \"Password@123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "auth", "login" ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh",
+          "request": {
+            "auth": null,
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/refresh",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "auth", "refresh" ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Role",
+      "item": [
+        {
+          "name": "Analyze Role",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{accessToken}}", "type": "string" } ] },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"roleName\": \"Backend Developer\",\n  \"topN\": 12\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/roles/analyze",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "roles", "analyze" ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Role Skills",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{accessToken}}", "type": "string" } ] },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/roles/{{roleId}}/skills",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "roles", "{{roleId}}", "skills" ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Roadmap",
+      "item": [
+        {
+          "name": "Generate Roadmap for User",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{accessToken}}", "type": "string" } ] },
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/roadmap/generate/{{userId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "roadmap", "generate", "{{userId}}" ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Roadmap for User",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{accessToken}}", "type": "string" } ] },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/roadmap/{{userId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "roadmap", "{{userId}}" ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Quiz",
+      "item": [
+        {
+          "name": "Start Quiz",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{accessToken}}", "type": "string" } ] },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": {{userId}},\n  \"difficulty\": \"medium\",\n  \"limit\": 5\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/quiz/start",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "quiz", "start" ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Submit Answer",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{accessToken}}", "type": "string" } ] },
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": {{userId}},\n  \"questionId\": {{questionId}},\n  \"selectedAnswer\": \"Your answer text\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/quiz/submit",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "quiz", "submit" ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Next Adaptive Question",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{accessToken}}", "type": "string" } ] },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/quiz/next-adaptive?userId={{userId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "quiz", "next-adaptive" ],
+              "query": [
+                { "key": "userId", "value": "{{userId}}" }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Performance",
+      "item": [
+        {
+          "name": "Get Performance",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{accessToken}}", "type": "string" } ] },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/performance/{{userId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "performance", "{{userId}}" ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Readiness Score",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{accessToken}}", "type": "string" } ] },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/performance/readiness-score/{{userId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "performance", "readiness-score", "{{userId}}" ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Schedule",
+      "item": [
+        {
+          "name": "Get Schedule (Next 14 days default)",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{accessToken}}", "type": "string" } ] },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/schedule/{{userId}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "schedule", "{{userId}}" ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Schedule (Custom Range)",
+          "request": {
+            "auth": { "type": "bearer", "bearer": [ { "key": "token", "value": "{{accessToken}}", "type": "string" } ] },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/schedule/{{userId}}?start={{startDate}}&end={{endDate}}",
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "schedule", "{{userId}}" ],
+              "query": [
+                { "key": "start", "value": "{{startDate}}" },
+                { "key": "end", "value": "{{endDate}}" }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      { "key": "token", "value": "{{accessToken}}", "type": "string" }
+    ]
+  },
+  "event": [],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "userId", "value": "1" },
+    { "key": "roleId", "value": "1" },
+    { "key": "questionId", "value": "1" },
+    { "key": "startDate", "value": "2026-02-13" },
+    { "key": "endDate", "value": "2026-02-20" }
+  ]
+}

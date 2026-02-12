@@ -34,11 +34,13 @@ function useSkillPerformance(userId: number) {
     queryKey: ['performance', userId],
     queryFn: async () => {
       const { data } = await api.get(`/performance/${userId}`);
-      // Normalize to { skillName, accuracy }
-      const items: SkillPerformance[] = Array.isArray(data) ? data : (data?.items ?? []);
-      return items.map((it: any) => ({
+      const skills = Array.isArray(data?.skills) ? data.skills : [];
+      return skills.map((it: any) => ({
         skillName: it.skillName ?? it.skill ?? 'Unknown',
-        accuracy: typeof it.accuracy === 'number' ? it.accuracy : (typeof it.score === 'number' ? it.score : 0)
+        // Backend returns accuracy in [0,1]; convert to percent
+        accuracy: typeof it.accuracy === 'number'
+          ? Math.round(Math.max(0, Math.min(1, it.accuracy)) * 100)
+          : (typeof it.score === 'number' ? Math.round(Math.max(0, Math.min(1, it.score)) * 100) : 0)
       })) as SkillPerformance[];
     }
   });
@@ -49,8 +51,15 @@ function useReadiness(userId: number) {
     queryKey: ['readiness', userId],
     queryFn: async () => {
       const { data } = await api.get(`/performance/readiness-score/${userId}`);
-      if (typeof data === 'number') return data;
-      if (data && typeof data.readinessScore === 'number') return data.readinessScore;
+      if (typeof data === 'number') {
+        // Backend endpoint returns normalized [0,1]; convert to percent
+        return Math.round(Math.max(0, Math.min(1, data)) * 100);
+      }
+      if (data && typeof data.readinessScore === 'number') {
+        const v = data.readinessScore;
+        // If normalized, convert; if already percent, keep
+        return v <= 1 ? Math.round(v * 100) : Math.round(v);
+      }
       return 0;
     }
   });

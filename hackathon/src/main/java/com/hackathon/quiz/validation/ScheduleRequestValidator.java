@@ -5,11 +5,13 @@ import com.hackathon.quiz.exception.ValidationException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.stereotype.Component;
 
 /**
  * Validator for practice schedule generation requests.
  * Keeps date logic and guardrails centralized.
  */
+@Component
 public class ScheduleRequestValidator {
 
     /**

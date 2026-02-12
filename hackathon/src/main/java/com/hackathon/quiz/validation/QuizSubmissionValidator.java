@@ -4,11 +4,13 @@ import com.hackathon.quiz.exception.ValidationException;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.stereotype.Component;
 
 /**
  * Validator for quiz submission/start requests.
  * Keeps controllers lean and centralizes complex validation logic.
  */
+@Component
 public class QuizSubmissionValidator {
 
     /**
