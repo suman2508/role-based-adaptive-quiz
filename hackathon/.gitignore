@@ -42,3 +42,8 @@ jacoco.exec
 
 # Environment files
 .env
+
+node_modules/
+.vite/
+dist/
+build/
