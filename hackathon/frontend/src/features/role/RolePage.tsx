@@ -1,5 +1,5 @@
 import React from 'react';
-import { API_BASE_URL } from '@config/env';
+import { api } from '@services/api/client';
 
 export default function RolePage() {
   const [roleName, setRoleName] = React.useState('Backend Developer');
@@ -12,13 +12,7 @@ export default function RolePage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${API_BASE_URL}/roles/analyze`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ roleName, topN })
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
+      const { data } = await api.post('/roles/analyze', { roleName, topN });
       setSkills((data?.skills ?? []).map((s: any) => ({ skillName: s.skillName, priorityScore: s.priorityScore })));
     } catch (e: any) {
       setError(e?.message ?? 'Failed to analyze role');
