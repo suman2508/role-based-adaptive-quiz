@@ -1,6 +1,7 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@services/api/client';
+import { getUserId } from '@app/store/auth';
 
 type RoadmapItem = {
   id?: number;
@@ -10,13 +11,13 @@ type RoadmapItem = {
   progress?: number; // 0..100 (optional client-side augmentation)
 };
 
-const defaultUserId = 1;
 
 export default function RoadmapPage() {
-  const [userId] = React.useState<number>(defaultUserId);
+  const userId = (getUserId() as number | null | undefined) ?? null;
 
   const roadmapQ = useQuery({
     queryKey: ['roadmap', userId],
+    enabled: !!userId,
     queryFn: async () => {
       const { data } = await api.get(`/roadmap/${userId}`);
       const items: RoadmapItem[] = Array.isArray(data) ? data : (data?.items ?? []);
@@ -37,7 +38,7 @@ export default function RoadmapPage() {
     <section className="grid gap-6">
       <header className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">Weekly Roadmap</h2>
-        <div className="text-sm text-gray-600">User ID: {userId}</div>
+        <div className="text-sm text-gray-600">User ID: {userId ?? '—'}</div>
       </header>
 
       <div className="rounded-lg border bg-white p-4 shadow-sm">

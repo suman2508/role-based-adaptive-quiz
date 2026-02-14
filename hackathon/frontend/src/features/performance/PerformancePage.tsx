@@ -1,6 +1,7 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@services/api/client';
+import { getUserId } from '@app/store/auth';
 import {
   ResponsiveContainer,
   BarChart,
@@ -27,11 +28,11 @@ type ReadinessResponse = {
   readinessScore?: number; // 0..100
 } | number;
 
-const defaultUserId = 1;
 
-function useSkillPerformance(userId: number) {
+function useSkillPerformance(userId: number | null) {
   return useQuery({
     queryKey: ['performance', userId],
+    enabled: !!userId,
     queryFn: async () => {
       const { data } = await api.get(`/performance/${userId}`);
       const skills = Array.isArray(data?.skills) ? data.skills : [];
@@ -46,9 +47,10 @@ function useSkillPerformance(userId: number) {
   });
 }
 
-function useReadiness(userId: number) {
+function useReadiness(userId: number | null) {
   return useQuery({
     queryKey: ['readiness', userId],
+    enabled: !!userId,
     queryFn: async () => {
       const { data } = await api.get(`/performance/readiness-score/${userId}`);
       if (typeof data === 'number') {
@@ -66,7 +68,7 @@ function useReadiness(userId: number) {
 }
 
 export default function PerformancePage() {
-  const [userId] = React.useState<number>(defaultUserId);
+  const userId = (getUserId() as number | null | undefined) ?? null;
   const perfQ = useSkillPerformance(userId);
   const readyQ = useReadiness(userId);
 
@@ -77,7 +79,7 @@ export default function PerformancePage() {
     <section className="grid gap-6">
       <header className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">Performance Analytics</h2>
-        <div className="text-sm text-gray-600">User ID: {userId}</div>
+        <div className="text-sm text-gray-600">User ID: {userId ?? '—'}</div>
       </header>
 
       <div className="grid gap-6 lg:grid-cols-3">

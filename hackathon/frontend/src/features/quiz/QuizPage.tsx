@@ -1,5 +1,6 @@
 import React from 'react';
 import { api } from '@services/api/client';
+import { getUserId } from '@app/store/auth';
 
 type QuizQuestion = {
   id: number;
@@ -17,10 +18,9 @@ type SubmitResult = {
   explanation?: string;
 };
 
-const defaultUserId = 1;
 
 export default function QuizPage() {
-  const [userId] = React.useState<number>(defaultUserId);
+  const userId = (getUserId() as number | null | undefined) ?? null;
   const [difficulty, setDifficulty] = React.useState<'easy' | 'medium' | 'hard'>('medium');
   const [limit, setLimit] = React.useState<number>(5);
 
@@ -36,6 +36,7 @@ export default function QuizPage() {
   const [error, setError] = React.useState<string | null>(null);
 
   async function startQuiz() {
+    if (!userId) { setError('Please sign in to start a quiz.'); return; }
     setLoadingBatch(true);
     setError(null);
     setBatch([]);
@@ -63,6 +64,7 @@ export default function QuizPage() {
   }
 
   async function nextAdaptive() {
+    if (!userId) { setError('Please sign in to continue.'); return; }
     setLoadingNext(true);
     setError(null);
     setCurrent(null);
@@ -87,6 +89,7 @@ export default function QuizPage() {
 
   async function submitAnswer() {
     if (!current) return;
+    if (!userId) { setError('Please sign in to submit.'); return; }
     if (!selectedAnswer) {
       setError('Please select an answer');
       return;
@@ -111,7 +114,7 @@ export default function QuizPage() {
     <section className="grid gap-6">
       <header className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">Adaptive Quiz</h2>
-        <div className="text-sm text-gray-600">User ID: {userId}</div>
+        <div className="text-sm text-gray-600">User ID: {userId ?? '—'}</div>
       </header>
 
       {/* Start batch controls */}

@@ -1,5 +1,6 @@
 import React from 'react';
 import { api } from '@services/api/client';
+import { getUserId } from '@app/store/auth';
 
 type ScheduleItem = {
   id?: number;
@@ -10,10 +11,9 @@ type ScheduleItem = {
   activityDescription?: string | null;
 };
 
-const defaultUserId = 1;
 
 export default function SchedulePage() {
-  const [userId] = React.useState<number>(defaultUserId);
+  const userId = (getUserId() as number | null | undefined) ?? null;
   const [start, setStart] = React.useState<string>(''); // YYYY-MM-DD
   const [end, setEnd] = React.useState<string>('');     // YYYY-MM-DD
 
@@ -22,6 +22,7 @@ export default function SchedulePage() {
   const [error, setError] = React.useState<string | null>(null);
 
   async function load() {
+    if (!userId) { setError('Please sign in to view schedule'); return; }
     setLoading(true);
     setError(null);
     setItems([]);
@@ -45,7 +46,7 @@ export default function SchedulePage() {
     <section className="grid gap-6">
       <header className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">Practice Schedule</h2>
-        <div className="text-sm text-gray-600">User ID: {userId}</div>
+        <div className="text-sm text-gray-600">User ID: {userId ?? '—'}</div>
       </header>
 
       <div className="rounded-lg border bg-white p-4 shadow-sm">
