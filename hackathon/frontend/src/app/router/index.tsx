@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route, Navigate, Link, Outlet } from 'react-router-dom';
 import ProtectedRoute from '@components/auth/ProtectedRoute';
 import SignInPage from '@features/auth/SignInPage';
+import SignUpPage from '@features/auth/SignUpPage';
 import RolePage from '@features/role/RolePage';
 import RoadmapPage from '@features/roadmap/RoadmapPage';
 import PerformancePage from '@features/performance/PerformancePage';
@@ -52,7 +53,7 @@ function LandingPage() {
         </p>
         <div className="flex gap-3">
           <Link
-            to="/role"
+            to="/signup"
             className="inline-flex items-center justify-center rounded-md bg-brand-600 px-4 py-2 text-white hover:bg-brand-700 transition"
           >
             Get Started
@@ -101,6 +102,7 @@ export default function AppRouter() {
         <Route path="schedule" element={<ProtectedRoute><SchedulePage /></ProtectedRoute>} />
       </Route>
       <Route path="signin" element={<SignInPage />} />
+      <Route path="signup" element={<SignUpPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
