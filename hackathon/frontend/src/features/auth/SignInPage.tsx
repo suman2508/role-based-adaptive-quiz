@@ -21,7 +21,12 @@ export default function SignInPage() {
     try {
       const { data } = await api.post('/auth/login', { email, password });
       if (!data?.accessToken) throw new Error('Invalid auth response');
-      setAuthTokens({ accessToken: data.accessToken, refreshToken: data.refreshToken ?? null, userEmail: email });
+      setAuthTokens({
+        accessToken: data.accessToken,
+        refreshToken: data.refreshToken ?? null,
+        userEmail: email,
+        userId: typeof data?.userId === 'number' ? data.userId : (typeof data?.user?.id === 'number' ? data.user.id : null)
+      });
       navigate(from, { replace: true });
     } catch (err: any) {
       setError(err?.response?.data?.message || err?.message || 'Sign in failed');

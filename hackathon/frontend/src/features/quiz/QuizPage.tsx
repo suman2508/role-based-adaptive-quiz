@@ -1,6 +1,6 @@
 import React from 'react';
 import { api } from '@services/api/client';
-import { getUserId } from '@app/store/auth';
+import { useAuthStore } from '@app/store/auth';
 
 type QuizQuestion = {
   id: number;
@@ -20,7 +20,7 @@ type SubmitResult = {
 
 
 export default function QuizPage() {
-  const userId = (getUserId() as number | null | undefined) ?? null;
+  const userId = useAuthStore((s) => s.userId ?? null);
   const [difficulty, setDifficulty] = React.useState<'easy' | 'medium' | 'hard'>('medium');
   const [limit, setLimit] = React.useState<number>(5);
 

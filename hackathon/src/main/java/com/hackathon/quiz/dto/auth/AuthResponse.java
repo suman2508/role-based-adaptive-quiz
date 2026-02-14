@@ -16,5 +16,6 @@ public class AuthResponse {
     private String tokenType;
     private String accessToken;
     private String refreshToken;
+    private Long userId;
     private long expiresIn; // milliseconds
 }

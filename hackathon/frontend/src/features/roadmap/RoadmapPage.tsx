@@ -1,7 +1,7 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@services/api/client';
-import { getUserId } from '@app/store/auth';
+import { useAuthStore } from '@app/store/auth';
 
 type RoadmapItem = {
   id?: number;
@@ -13,7 +13,7 @@ type RoadmapItem = {
 
 
 export default function RoadmapPage() {
-  const userId = (getUserId() as number | null | undefined) ?? null;
+  const userId = useAuthStore((s) => s.userId ?? null);
 
   const roadmapQ = useQuery({
     queryKey: ['roadmap', userId],
@@ -34,6 +34,21 @@ export default function RoadmapPage() {
     }
   });
 
+  const [generating, setGenerating] = React.useState(false);
+  async function generate() {
+    if (!userId) return;
+    setGenerating(true);
+    try {
+      await api.post(`/roadmap/generate/${userId}`);
+      await roadmapQ.refetch();
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(e);
+    } finally {
+      setGenerating(false);
+    }
+  }
+
   return (
     <section className="grid gap-6">
       <header className="flex items-center justify-between">
@@ -47,7 +62,16 @@ export default function RoadmapPage() {
         ) : roadmapQ.isError ? (
           <p className="text-sm text-red-600">Failed to load roadmap</p>
         ) : (roadmapQ.data ?? []).length === 0 ? (
-          <p className="text-sm text-gray-600">No roadmap available. Generate one from backend.</p>
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-gray-600">No roadmap yet. Generate based on your target role.</p>
+            <button
+              onClick={generate}
+              disabled={!userId || generating}
+              className="inline-flex items-center justify-center rounded-md bg-brand-600 px-3 py-2 text-white hover:bg-brand-700 transition disabled:opacity-60"
+            >
+              {generating ? 'Generating...' : 'Generate Roadmap'}
+            </button>
+          </div>
         ) : (
           <ol className="relative border-s pl-6 space-y-6">
             {(roadmapQ.data ?? []).map((item, idx) => (

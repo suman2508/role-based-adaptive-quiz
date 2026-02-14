@@ -1,7 +1,7 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@services/api/client';
-import { getUserId } from '@app/store/auth';
+import { useAuthStore } from '@app/store/auth';
 import {
   ResponsiveContainer,
   BarChart,
@@ -68,7 +68,7 @@ function useReadiness(userId: number | null) {
 }
 
 export default function PerformancePage() {
-  const userId = (getUserId() as number | null | undefined) ?? null;
+  const userId = useAuthStore((s) => s.userId ?? null);
   const perfQ = useSkillPerformance(userId);
   const readyQ = useReadiness(userId);
 

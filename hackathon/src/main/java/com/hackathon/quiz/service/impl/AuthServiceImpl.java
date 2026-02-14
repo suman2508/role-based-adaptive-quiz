@@ -61,6 +61,7 @@ public class AuthServiceImpl implements AuthService {
                 .tokenType("Bearer")
                 .accessToken(access)
                 .refreshToken(refresh)
+                .userId(user.getId())
                 .expiresIn(jwtService.getExpirationMs())
                 .build();
     }
@@ -87,6 +88,7 @@ public class AuthServiceImpl implements AuthService {
                 .tokenType("Bearer")
                 .accessToken(access)
                 .refreshToken(refresh)
+                .userId(user.getId())
                 .expiresIn(jwtService.getExpirationMs())
                 .build();
     }
@@ -123,6 +125,7 @@ public class AuthServiceImpl implements AuthService {
                 .tokenType("Bearer")
                 .accessToken(newAccess)
                 .refreshToken(newRefresh)
+                .userId(user.getId())
                 .expiresIn(jwtService.getExpirationMs())
                 .build();
     }
