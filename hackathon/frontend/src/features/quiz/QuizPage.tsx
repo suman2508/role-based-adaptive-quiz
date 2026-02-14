@@ -110,6 +110,12 @@ export default function QuizPage() {
     }
   }
 
+  function answerFromBatch(q: QuizQuestion) {
+    setCurrent(q);
+    setSelectedAnswer('');
+    setLastResult(null);
+  }
+
   return (
     <section className="grid gap-6">
       <header className="flex items-center justify-between">
@@ -169,6 +175,14 @@ export default function QuizPage() {
                     <div>
                       <div className="text-xs text-gray-500">{q.skillName} · {q.difficulty}</div>
                       <p className="font-medium">{q.questionText}</p>
+                    </div>
+                    <div className="min-w-[100px] text-right">
+                      <button
+                        onClick={() => answerFromBatch(q)}
+                        className="inline-flex items-center justify-center rounded-md border px-3 py-1.5 text-sm hover:bg-gray-50 transition"
+                      >
+                        Answer
+                      </button>
                     </div>
                   </div>
                   {Array.isArray(q.options) && q.options.length > 0 && (
