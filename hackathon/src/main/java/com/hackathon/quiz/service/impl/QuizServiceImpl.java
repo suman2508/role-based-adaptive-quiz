@@ -78,7 +78,7 @@ public class QuizServiceImpl implements QuizService {
                     .orElseThrow(() -> new ResourceNotFoundException("Role not found by name: " + user.getTargetRole()));
 
             candidateSkills = skillRepository.findByRoleOrderByPriorityScoreAsc(role).stream()
-                    .sorted(Comparator.comparing(Skill::getPriorityScore).reversed())
+                    .sorted(Comparator.comparing(Skill::getPriorityScore, Comparator.nullsFirst(Integer::compareTo)).reversed())
                     .toList();
             if (candidateSkills.isEmpty()) {
                 throw new ResourceNotFoundException("No skills found for role: " + role.getRoleName());
@@ -198,19 +198,23 @@ public class QuizServiceImpl implements QuizService {
     }
 
     private QuizQuestion findOrGenerateQuestion(Skill skill, String storageDifficulty) {
-        // Try existing first
-        Optional<QuizQuestion> existing = quizQuestionRepository.findFirstBySkillAndDifficultyOrderByIdAsc(skill, storageDifficulty);
-        if (existing.isPresent()) {
-            return existing.get();
+        // Try existing first (guard against legacy column type mismatches etc.)
+        try {
+            Optional<QuizQuestion> existing = quizQuestionRepository.findFirstBySkillAndDifficultyOrderByIdAsc(skill, storageDifficulty);
+            if (existing.isPresent()) {
+                return existing.get();
+            }
+        } catch (Exception ex) {
+            log.error("Existing question lookup failed for skill={}, difficulty={}, cause={}",
+                    skill != null ? skill.getSkillName() : "N/A", storageDifficulty, ex.toString(), ex);
         }
-
+    
         // Fallback to AI generation
         try {
             String raw = quizGenerationAIService.generateQuestionsJson(skill.getSkillName(), storageDifficulty);
             return persistGeneratedQuestion(skill, storageDifficulty, raw);
         } catch (Exception e) {
-            log.warn("AI generation failed for skill={}, difficulty={}, err={}",
-                    skill.getSkillName(), storageDifficulty, e.toString());
+            log.warn("AI generation failed for skill={}, difficulty={}", skill.getSkillName(), storageDifficulty, e);
             return null;
         }
     }
@@ -236,6 +240,10 @@ public class QuizServiceImpl implements QuizService {
         }
 
         String correctAnswer = textOr(root, "correctAnswer", "answer");
+        if (correctAnswer == null) correctAnswer = "";
+        if (correctAnswer.length() > 512) {
+            correctAnswer = correctAnswer.substring(0, 512);
+        }
         String explanation = textOr(root, "explanation", "why");
 
         // If AI returns difficulty, override only if it's valid

@@ -28,8 +28,8 @@ public class QuizQuestion {
     @Column(name = "question_text", columnDefinition = "TEXT", nullable = false)
     private String questionText;
 
-    // Store options as JSON string for portability; service layer provides typed DTOs
-    @Column(columnDefinition = "JSONB", nullable = false)
+    // Store options as JSON string for portability; prefer TEXT to avoid DB-specific jsonb casting issues
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String options;
 
     @Column(name = "correct_answer", length = 512, nullable = false)
